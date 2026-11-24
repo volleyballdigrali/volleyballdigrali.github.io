@@ -1,0 +1,97 @@
+# Volleyball Digrali - install or update Home Base on a Windows PC.
+# Run this one line in PowerShell (Start menu -> type PowerShell -> Enter):
+#
+#   irm https://volleyballdigrali.github.io/home-base/install.txt | iex
+#
+# What it does: checks that Python 3 is installed, makes C:\vb-home-base, downloads home_base.py,
+# start-home-base.bat and README.txt into it, unblocks them, adds a "Home Base" shortcut to the Desktop,
+# and offers to start it. Running it again updates the program. It never touches your data
+# (volleyball.db, backups, imports). Nothing is sent anywhere; it only downloads these three files.
+# To use another folder: $env:VB_HOME_BASE_DIR = 'D:\Volleyball'; then run the line above.
+# (It's a .txt file so the web site serves it as plain text for PowerShell to read.)
+
+& {
+  $ErrorActionPreference = 'Stop'
+  try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch {}
+  $site  = 'https://volleyballdigrali.github.io/home-base/'
+  $files = @('home_base.py', 'start-home-base.bat', 'README.txt')
+  $dir   = if ($env:VB_HOME_BASE_DIR) { $env:VB_HOME_BASE_DIR } else { 'C:\vb-home-base' }
+
+  Write-Host ''
+  Write-Host 'Volleyball Digrali - Home Base installer' -ForegroundColor Cyan
+  Write-Host "Folder: $dir"
+  if ($dir -match 'OneDrive|Dropbox|Google Drive|iCloud') {
+    Write-Host 'That folder is synced to the cloud. The database holds players'' names, so keep Home Base on the PC itself,' -ForegroundColor Yellow
+    Write-Host 'for example C:\vb-home-base. Remove $env:VB_HOME_BASE_DIR (or set it to another folder) and run this again.' -ForegroundColor Yellow
+    return
+  }
+  Write-Host ''
+
+  # 1. Python 3.7 or newer. Each one found is actually run, so Python from the Microsoft Store works, and Windows'
+  #    placeholder 'python' (which only offers to install it) fails the test and is skipped.
+  $py = $null
+  foreach ($name in @('python', 'py')) {
+    $cmd = Get-Command $name -ErrorAction SilentlyContinue
+    if ($cmd) {
+      $ok = $null
+      try { $ok = & $name -c "import sys; print(sys.version_info >= (3, 7))" 2>$null } catch {}
+      if ($ok -eq 'True') { $py = $name; break }
+    }
+  }
+  if (-not $py) {
+    Write-Host 'Python 3 is not installed yet (or is older than 3.7).' -ForegroundColor Yellow
+    Write-Host '  1. Install it from python.org (opening the page now).'
+    Write-Host '  2. On the first installer screen, tick "Add python.exe to PATH", then Install Now.'
+    Write-Host '  3. Close this window, open a new PowerShell, and run the same line again.'
+    try { Start-Process 'https://www.python.org/downloads/' } catch {}
+    return
+  }
+  Write-Host "Python found ($py)." -ForegroundColor Green
+
+  # 2. Home Base must not be running while its program is replaced
+  $busy = $null
+  try { $busy = Get-NetTCPConnection -LocalPort 8770 -State Listen -ErrorAction SilentlyContinue } catch {}
+  if ($busy) {
+    Write-Host 'Home Base is running. Close its black window first, then run this again.' -ForegroundColor Yellow
+    Write-Host '(Or just use Update now on the Home Base Dashboard.)'
+    return
+  }
+
+  # 3. The folder; keep a copy of the old program when updating
+  New-Item -ItemType Directory -Force -Path $dir | Out-Null
+  $old = Join-Path $dir 'home_base.py'
+  if (Test-Path $old) {
+    $bk = Join-Path $dir 'backups'
+    New-Item -ItemType Directory -Force -Path $bk | Out-Null
+    Copy-Item $old (Join-Path $bk ('home_base-before-install-' + (Get-Date -Format 'yyyy-MM-dd-HHmm') + '.py')) -Force
+    Write-Host 'Updating the existing Home Base (your data stays as it is).'
+  }
+
+  # 4. Download each file to a temporary name, then put it in place
+  foreach ($f in $files) {
+    $dest = Join-Path $dir $f
+    $tmp  = "$dest.download"
+    Write-Host "Downloading $f ..."
+    Invoke-WebRequest -UseBasicParsing -Uri ($site + $f + '?t=' + [DateTime]::UtcNow.Ticks) -OutFile $tmp
+    if ((Get-Item $tmp).Length -lt 100) { Remove-Item $tmp -Force; throw "The download of $f looks empty. Check the internet connection and try again." }
+    Move-Item $tmp $dest -Force
+    Unblock-File $dest
+  }
+
+  # 5. A Desktop shortcut
+  try {
+    $desk = [Environment]::GetFolderPath('Desktop')
+    $lnk  = (New-Object -ComObject WScript.Shell).CreateShortcut((Join-Path $desk 'Home Base.lnk'))
+    $lnk.TargetPath = Join-Path $dir 'start-home-base.bat'
+    $lnk.WorkingDirectory = $dir
+    $lnk.Description = 'Start Volleyball Home Base'
+    $lnk.Save()
+    Write-Host 'Added a "Home Base" shortcut to the Desktop.'
+  } catch { Write-Host 'Could not add a Desktop shortcut; start it from the folder instead.' }
+
+  Write-Host ''
+  Write-Host 'Home Base is installed.' -ForegroundColor Green
+  Write-Host 'Start it any time with the Home Base shortcut on the Desktop. Leave the black window open while you use it.'
+  $a = Read-Host 'Start Home Base now? (Y/N)'
+  if ($a -match '^[Yy]') { Start-Process (Join-Path $dir 'start-home-base.bat') -WorkingDirectory $dir }
+}
