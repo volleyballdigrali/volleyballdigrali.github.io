@@ -28,7 +28,7 @@ import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs, quote
 
-VERSION = "1.8.0"
+VERSION = "1.8.1"
 PORT = 8770
 HERE = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(HERE, "volleyball.db")
@@ -652,6 +652,7 @@ nav{display:flex;flex-wrap:wrap;gap:2px;margin-top:10px}nav a{margin:0;padding:8
 nav a:hover{opacity:1;background:rgba(255,255,255,.08)}nav a.on{background:#eef0f1;color:#17181b;opacity:1}
 main{max-width:1200px}main>*{min-width:0}.scroll{overflow-x:auto}td,th{white-space:nowrap}tfoot td{font-weight:700;border-top:2px solid #18191c}
 tbody tr:nth-child(even){background:#f7f9fb}
+main a:not(.btn){color:#c8102e}
 table.work td,table.work th{text-align:center}table.work td:nth-child(2),table.work th:nth-child(2){text-align:left}
 .wk{font-weight:700}.wk.off,.wk.abs{color:#5f636a;font-weight:500}.wk.abs{color:#b91c1c}
 .filters form{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end}.filters label{display:grid;gap:3px;font-size:13px;font-weight:600;color:#5f636a}
@@ -930,7 +931,7 @@ def dashboard():
     <section class='card'><h2>What's in the database</h2>%s<p class='muted'>Database file: <code>%s</code></p></section>
     <section class='card'><h2>Support Volleyball Digrali</h2>
       <p>Volleyball Digrali is free, with no ads. If it helps your club, you can buy the developer a coffee: <a class='btn alt' href='https://ko-fi.com/volleyballdigrali' target='_blank' rel='noopener'>Support on Ko-fi</a></p>
-      <p class='muted'>Questions or problems? Email <a href='mailto:volleyballdigrali@outlook.com'>volleyballdigrali@outlook.com</a>. Help is best effort.</p></section>
+      <p class='muted'>Questions or problems? Email <a href='mailto:volleyballdigrali@gmail.com'>volleyballdigrali@gmail.com</a>. Help is best effort.</p></section>
     <script>
     const pout = document.getElementById('pout');
     const pe = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]);
