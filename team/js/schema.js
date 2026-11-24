@@ -2,10 +2,11 @@
 // To add a field later: add it to the list here and in home_base.py. Old rows simply don't have it yet.
 // Every table also has the COMMON columns, which make syncing between devices safe.
 
-export const APP_VERSION = "v1.13";
+export const APP_VERSION = "v1.13.1";
 
 // "What's new" notes, newest first. Shown once after an update, and any time by tapping the version number.
 export const RELEASE_NOTES = [
+  ["v1.13.1", ["On iPhone, the top of the app no longer sits under the time and battery. If it still does, close the app completely and open it again."]],
   ["v1.13", ["New web address: volleyballdigrali.github.io/team. If your app came from the old address, it shows how to move your data across.",
              "Schedule: Add to calendar makes a calendar file of the upcoming matches (or the whole season) for your phone's calendar.",
              "The match bar shows the substitutions used in the set (for example 9 of 15 subs used), and turns yellow, then red, near the limit.",

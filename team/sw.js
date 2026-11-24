@@ -1,6 +1,6 @@
 // Offline support. Always tries the network first (so updates show up right away when online)
 // and falls back to the saved copy when there's no connection at the gym.
-const CACHE = "vbteam-v32";
+const CACHE = "vbteam-v33";
 const FILES = [
   "./", "./index.html", "./styles.css", "./icon.png", "./icon-192.png", "./icon-512.png", "./manifest.webmanifest",
   "./js/app.js", "./js/db.js", "./js/schema.js", "./js/sync.js", "./js/ui.js", "./js/model.js", "./js/match.js", "./js/court.js",
