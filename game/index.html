@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Side-out</title>
+<meta name="theme-color" content="#17181b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="icon" href="../team/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Side-out: a volleyball word game. Guess the word in 6 tries: solve it and you score, miss it and they score. First to 5. */
+:root {
+  --bg: #eef0f1; --surface: #ffffff; --ink: #18191c; --muted: #5f636a; --line: #d9dbde;
+  --head: #17181b; --head-ink: #f1f1f2; --accent: #c8102e; --gray: #8b9096; --court: #e9d9bd; --key: #eef0f1;
+  --font-display: "Barlow Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+  --font-body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #111214; --surface: #1c1d20; --ink: #ececee; --muted: #9a9ea6; --line: #2f3135;
+          --head: #0b0b0c; --head-ink: #ececee; --accent: #e23a50; --gray: #8b9096; --court: #3a3326; --key: #2a2c30; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.45; }
+header { background: var(--head); color: var(--head-ink);
+         padding-block: calc(14px + env(safe-area-inset-top, 0px)) 14px;
+         padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header .in, main { max-width: 640px; margin: 0 auto; }
+header .in { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+header a { color: var(--head-ink); text-decoration: none; font-weight: 600; font-size: 15px; padding: 6px 10px;
+           border: 1px solid color-mix(in srgb, var(--head-ink) 35%, transparent); border-radius: 8px; }
+h1 { margin: 0; font-family: var(--font-display); font-size: 30px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
+main { padding-block: 14px 40px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+       display: grid; gap: 12px; }
+.score { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; background: var(--head); color: var(--head-ink);
+         border-radius: 14px; padding: 10px 16px; }
+.side { display: grid; gap: 2px; }
+.side.them { text-align: right; }
+.side span { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; opacity: .75; }
+.side b { font-family: var(--font-display); font-size: 40px; line-height: 1; font-variant-numeric: tabular-nums; }
+.to { font-size: 13px; opacity: .7; text-align: center; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px; min-width: 0; }
+canvas { display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; background: var(--court); }
+.tries { display: flex; justify-content: center; gap: 6px; margin-top: 8px; }
+.tries i { width: 12px; height: 12px; border-radius: 50%; background: var(--line); }
+.tries i.used { background: var(--accent); }
+.word { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; margin: 12px 0 4px; }
+.word .w { display: flex; gap: 4px; }
+.word .l { width: 26px; border-bottom: 3px solid var(--ink); text-align: center; font-family: var(--font-display); font-size: 28px;
+           font-weight: 700; text-transform: uppercase; line-height: 1.2; min-height: 36px; }
+.word .l.miss { color: var(--accent); }
+.status { text-align: center; min-height: 26px; font-weight: 600; margin: 4px 0 0; }
+.keys { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 5px; }
+.keys button { font: inherit; font-weight: 700; font-size: 18px; text-transform: uppercase; padding: 10px 0; border-radius: 8px;
+               border: 1px solid var(--line); background: var(--key); color: var(--ink); cursor: pointer; touch-action: manipulation; }
+.keys button.hit { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.keys button.miss { background: transparent; color: var(--muted); text-decoration: line-through; }
+.keys button:disabled { cursor: default; }
+.keys button:focus-visible, .btn:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+label { font-size: 15px; color: var(--muted); display: flex; gap: 8px; align-items: center; }
+select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.btn { font-family: var(--font-display); font-weight: 600; font-size: 18px; letter-spacing: .04em; text-transform: uppercase; border: 0;
+       background: var(--accent); color: #fff; border-radius: 10px; padding: 10px 16px; cursor: pointer; }
+.btn.alt { background: transparent; color: var(--accent); border: 2px solid var(--accent); padding: 8px 14px; }
+.btn[hidden] { display: none; }
+.how { color: var(--muted); font-size: 14px; margin: 0; }
+@media (max-width: 420px) { .keys button { font-size: 16px; padding: 9px 0; } .word .l { width: 22px; font-size: 24px; } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<header><div class="in">
+  <a href="../">‹ Home menu</a>
+  <h1>Side-out</h1>
+</div></header>
+
+<main>
+  <section class="score" aria-label="Score">
+    <div class="side"><span>You</span><b id="s-you">0</b></div>
+    <div class="to">First to 5</div>
+    <div class="side them"><span>Them</span><b id="s-them">0</b></div>
+  </section>
+
+  <section class="card">
+    <canvas id="court" width="640" height="360" aria-hidden="true"></canvas>
+    <div class="tries" id="tries" aria-label="Tries left"></div>
+    <div class="word" id="word" aria-label="The word"></div>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+  </section>
+
+  <section class="keys" id="keys" aria-label="Letters"></section>
+
+  <div class="row">
+    <label for="level">Words
+      <select id="level"><option value="easy">Easy</option><option value="hard">Hard</option><option value="volleyball">Volleyball</option></select>
+    </label>
+    <div class="row" style="gap:8px">
+      <button class="btn" type="button" id="next" hidden>Next rally</button>
+      <button class="btn alt" type="button" id="new">New match</button>
+    </div>
+  </div>
+  <p class="how">Guess the word one letter at a time. You get 6 misses. Solve it and you win the rally; run out and they score. First to 5 wins the match. You can type on a keyboard too.</p>
+</main>
+
+<script src="words.js"></script>
+<script>
+(() => {
+  const TRIES = 6, TO = 5, $ = id => document.getElementById(id);
+  const cv = $("court"), g = cv.getContext("2d"), W = cv.width, H = cv.height;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const css = k => getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+  let you = 0, them = 0, word = "", guessed = new Set(), misses = 0, over = false, scene = 0, lastScene = -1, recent = [];
+  let anim = null;
+
+  // ---------- words ----------
+  function pick() {
+    let list = (window.SIDEOUT_WORDS || {})[$("level").value] || ["volleyball"];
+    let w, n = 0;
+    do { w = list[Math.floor(Math.random() * list.length)]; n++; } while (recent.includes(w) && n < 50);
+    recent.push(w); if (recent.length > 40) recent.shift();
+    return w;
+  }
+  const letters = () => [...new Set(word.replace(/[^a-z]/g, ""))];
+  const solved = () => letters().every(c => guessed.has(c));
+
+  // ---------- drawing (club colours) ----------
+  const C = () => ({ red: css("--accent") || "#c8102e", ink: "#17181b", gray: "#8b9096", white: "#ffffff", floor: css("--court") || "#e9d9bd" });
+  function clear() { const c = C(); g.fillStyle = c.floor; g.fillRect(0, 0, W, H);
+    g.fillStyle = "rgba(0,0,0,.08)"; g.fillRect(0, H - 40, W, 40); g.strokeStyle = "rgba(0,0,0,.25)"; g.lineWidth = 3;
+    g.beginPath(); g.moveTo(0, H - 40); g.lineTo(W, H - 40); g.stroke(); }
+  function ball(x, y, r, spin = 0, fill = null) {   // fill: 0..1 of red from the bottom (the Fill scene), or null for a normal ball
+    const c = C();
+    g.save(); g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fillStyle = c.white; g.fill();
+    if (fill !== null) { g.clip(); g.fillStyle = c.red; g.fillRect(x - r, y + r - 2 * r * fill, 2 * r, 2 * r * fill + 1); }
+    else { g.clip(); g.translate(x, y); g.rotate(spin);
+      g.fillStyle = c.red; g.beginPath(); g.ellipse(-r * .35, 0, r * .28, r * 1.1, .5, 0, Math.PI * 2); g.fill();
+      g.fillStyle = c.gray; g.beginPath(); g.ellipse(r * .45, 0, r * .25, r * 1.1, -.4, 0, Math.PI * 2); g.fill(); }
+    g.restore();
+    g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.strokeStyle = c.ink; g.lineWidth = 2.5; g.stroke();
+    if (fill !== null) { g.save(); g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.clip(); g.strokeStyle = "rgba(23,24,27,.45)"; g.lineWidth = 2;
+      for (const a of [-.6, .2, 1]) { g.beginPath(); g.arc(x + r * a * 1.4, y - r * .2, r * 1.2, 0, Math.PI * 2); g.stroke(); } g.restore(); }
+  }
+  // A simple player: head, body, arms and legs from joint angles. Club red jersey for us, gray for them.
+  function player(x, y, o) {
+    const c = C(), s = o.scale || 1, col = o.them ? c.gray : c.red;
+    g.save(); g.translate(x, y); g.rotate(o.lean || 0); g.scale(s, s); g.lineCap = "round"; g.lineJoin = "round";
+    const limb = (x1, y1, a, len, w, color) => { const x2 = x1 + Math.cos(a) * len, y2 = y1 + Math.sin(a) * len;
+      g.strokeStyle = color; g.lineWidth = w; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); return [x2, y2]; };
+    limb(-6, 0, o.legL ?? 1.9, 44, 10, c.ink); limb(6, 0, o.legR ?? 1.25, 44, 10, c.ink);
+    g.fillStyle = col; g.beginPath(); g.roundRect ? g.roundRect(-13, -52, 26, 54, 8) : g.rect(-13, -52, 26, 54); g.fill();
+    limb(-10, -44, o.armL ?? 2.2, 36, 8, c.ink); limb(10, -44, o.armR ?? .9, 36, 8, c.ink);
+    g.fillStyle = c.ink; g.beginPath(); g.arc(0, -66, 13, 0, Math.PI * 2); g.fill();
+    g.restore();
+  }
+  function net(x) { const c = C(); g.strokeStyle = c.ink; g.lineWidth = 4; g.beginPath(); g.moveTo(x, H - 40); g.lineTo(x, 110); g.stroke();
+    g.fillStyle = c.white; g.fillRect(x - 3, 110, 6, 10); g.strokeStyle = "rgba(23,24,27,.35)"; g.lineWidth = 1;
+    for (let yy = 120; yy < 200; yy += 10) { g.beginPath(); g.moveTo(x - 4, yy); g.lineTo(x + 4, yy); g.stroke(); } }
+
+  // Each scene draws step k (0..6 misses) and its two endings: t runs 0..1 through the ending.
+  const SCENES = [
+    { name: "fill", draw(k, end, t) {   // the ball fills up with red, a stripe a miss
+        clear(); const f = end === "lose" ? 1 : end === "win" ? Math.max(0, k / TRIES * (1 - t)) : k / TRIES;
+        ball(W / 2, H / 2 - 18 - (end === "win" ? Math.sin(t * Math.PI) * 30 : 0), 92, 0, f);
+        if (end === "lose") { g.fillStyle = C().red; g.font = "700 44px Barlow Condensed, sans-serif"; g.textAlign = "center"; g.fillText("FULL!", W / 2, H - 10); }
+      } },
+    { name: "drop", draw(k, end, t) {   // the ball drops toward the floor while a player dives for it
+        clear(); const floorY = H - 40 - 22;
+        let by = 50 + (floorY - 50) * (k / TRIES), px = W - 70 - (W - 70 - (W / 2 + 70)) * (k / TRIES);
+        if (end === "lose") { by = floorY; px = W / 2 + 70; }
+        if (end === "win") { px = W / 2 + 26; by = floorY - 40 - Math.sin(t * Math.PI) * 140 * Math.min(1, t * 1.5); }
+        player(px, H - 52, { lean: -1.15, armL: 3.1, armR: 3.2, legL: .5, legR: .2 });
+        ball(W / 2, by, 24, k);
+        if (end === "lose") { g.strokeStyle = C().ink; g.lineWidth = 3; for (const d of [-1, 1]) { g.beginPath(); g.moveTo(W / 2 + d * 30, floorY + 18); g.lineTo(W / 2 + d * 46, floorY + 8); g.stroke(); } }
+      } },
+    { name: "spike", draw(k, end, t) {  // a hitter goes up while the block grows taller
+        clear(); net(W / 2);
+        const jump = 70; player(W / 2 - 80, H - 40 - jump, { armR: -1.3, armL: -2.2, legL: 1.7, legR: 1.4 });
+        const blockers = end === "win" ? 0 : Math.min(2, Math.ceil(k / 3)), reach = 40 + (end === "lose" ? 70 : k * 11);
+        for (let i = 0; i < Math.max(1, blockers); i++) if (k > 0 || end) player(W / 2 + 34 + i * 34, H - 40 - reach * .6, { them: true, armL: -1.7, armR: -1.45, legL: 1.75, legR: 1.4 });
+        let bx = W / 2 - 50, by = H - 40 - jump - 100;
+        if (end === "win") { bx = W / 2 - 50 + t * 230; by = by + t * (H - 62 - by); }
+        if (end === "lose") { bx = W / 2 - 20 - t * 120; by = by + t * t * (H - 62 - by); }
+        ball(bx, by, 20, t * 6);
+      } },
+    { name: "dig", draw(k, end, t) {    // a hard-driven ball comes in; the platform gets shakier
+        clear(); const shake = end === "win" ? 0 : (end === "lose" ? 1 : k / TRIES);
+        player(170, H - 52, { lean: .15, armL: .55 + shake * .7, armR: .35 + shake * 1.1, legL: 2.2, legR: .9 });
+        let bx = W - 40 - (W - 260) * (k / TRIES), by = 40 + (H - 160 - 40) * (k / TRIES);
+        if (end === "win") { bx = 225 + t * 40; by = H - 120 - Math.sin(t * Math.PI / 2) * 190; }
+        if (end === "lose") { bx = 225 + t * 420; by = H - 120 - t * 60; }
+        ball(bx, by, 20, k + t * 6);
+        if (!end && k) { g.strokeStyle = "rgba(23,24,27,.3)"; g.lineWidth = 2; for (let i = 1; i <= 3; i++) { g.beginPath(); g.moveTo(bx + 18 + i * 12, by - 12 - i * 8); g.lineTo(bx + 34 + i * 12, by - 22 - i * 8); g.stroke(); } }
+      } },
+  ];
+  function drawNow() { SCENES[scene].draw(misses, null, 0); }
+  function play(end) {
+    cancelAnimationFrame(anim);
+    if (reduce) { SCENES[scene].draw(misses, end, 1); return; }
+    const t0 = performance.now(), D = 900;
+    const step = now => { const t = Math.min(1, (now - t0) / D); SCENES[scene].draw(misses, end, t); if (t < 1) anim = requestAnimationFrame(step); };
+    anim = requestAnimationFrame(step);
+  }
+
+  // ---------- game ----------
+  const KEYS = "abcdefghijklmnopqrstuvwxyz";
+  function buildKeys() {
+    $("keys").innerHTML = [...KEYS].map(c => `<button type="button" data-k="${c}" aria-label="${c.toUpperCase()}">${c}</button>`).join("");
+    for (const b of $("keys").querySelectorAll("button")) b.onclick = () => guess(b.dataset.k);
+  }
+  function render() {
+    $("s-you").textContent = you; $("s-them").textContent = them;
+    $("tries").innerHTML = Array.from({ length: TRIES }, (_, i) => `<i class="${i < misses ? "used" : ""}"></i>`).join("");
+    $("tries").setAttribute("aria-label", `${TRIES - misses} misses left`);
+    $("word").innerHTML = word.split(" ").map(w => `<span class="w">${[...w].map(c => {
+      const show = guessed.has(c) || over, miss = over && !guessed.has(c);
+      return `<span class="l${miss ? " miss" : ""}">${show ? c : ""}</span>`; }).join("")}</span>`).join("");
+    for (const b of $("keys").querySelectorAll("button")) {
+      const k = b.dataset.k, used = guessed.has(k);
+      b.className = used ? (word.includes(k) ? "hit" : "miss") : ""; b.disabled = used || over;
+    }
+  }
+  function newRally() {
+    word = pick(); guessed = new Set(); misses = 0; over = false;
+    do { scene = Math.floor(Math.random() * SCENES.length); } while (scene === lastScene && SCENES.length > 1); lastScene = scene;
+    $("next").hidden = true; $("status").textContent = `${word.split(" ").length > 1 ? "A phrase" : "A word"} of ${word.replace(/ /g, "").length} letters. ${TRIES} misses allowed.`;
+    render(); drawNow();
+  }
+  function newMatch() { you = 0; them = 0; newRally(); }
+  function guess(k) {
+    if (over || guessed.has(k) || !KEYS.includes(k)) return;
+    guessed.add(k);
+    if (!word.includes(k)) misses++;
+    if (solved()) { over = true; you++; play("win"); }
+    else if (misses >= TRIES) { over = true; them++; play("lose"); }
+    else drawNow();
+    render();
+    if (over) {
+      const done = you >= TO || them >= TO;
+      $("status").textContent = done ? (you >= TO ? `You win the match ${you}–${them}!` : `They win the match ${them}–${you}. The word was ${word.toUpperCase()}.`)
+        : (misses >= TRIES ? `Point them. The word was ${word.toUpperCase()}.` : "Point you! Nice rally.");
+      $("next").hidden = done; if (!done) $("next").focus();
+    } else $("status").textContent = word.includes(k) ? `Yes: ${k.toUpperCase()}.` : `No ${k.toUpperCase()}. ${TRIES - misses} ${TRIES - misses === 1 ? "miss" : "misses"} left.`;
+  }
+  $("next").onclick = newRally;
+  $("new").onclick = newMatch;
+  $("level").onchange = () => { try { localStorage.setItem("vbd-sideout-level", $("level").value); } catch {} recent = []; newRally(); };
+  addEventListener("keydown", e => {
+    if (e.metaKey || e.ctrlKey || e.altKey || e.target.tagName === "SELECT") return;
+    const k = e.key.toLowerCase();
+    if (k.length === 1 && KEYS.includes(k)) { guess(k); e.preventDefault(); }
+    else if (k === "enter" && over && !$("next").hidden) newRally();
+  });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => over ? SCENES[scene].draw(misses, you + them && solved() ? "win" : "lose", 1) : drawNow());
+  try { const lv = localStorage.getItem("vbd-sideout-level"); if (lv) $("level").value = lv; } catch {}
+  buildKeys(); newMatch();
+  window.__sideout = { get word() { return word; }, get scene() { return scene; }, setScene(n) { scene = n; drawNow(); } };   // for testing
+})();
+</script>
+</body>
+</html>

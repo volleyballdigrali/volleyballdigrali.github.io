@@ -2,12 +2,13 @@
 // To add a field later: add it to the list here and in home_base.py. Old rows simply don't have it yet.
 // Every table also has the COMMON columns, which make syncing between devices safe.
 
-export const APP_VERSION = "v1.13.2";
+export const APP_VERSION = "v1.14";
 export const MAKER = "Volleyball Digrali dgr-0b1e-ace5";   // written into every sync file
 
 // "What's new" notes, newest first. Shown once after an update, and any time by tapping the version number.
 export const RELEASE_NOTES = [
-  ["v1.13.2", ["New license: Volleyball Digrali stays free for every coach and club, but nobody may use its code to make a competing product, sold or free (PolyForm Shield License). The terms of use were updated, so you're asked to agree once more.",
+  ["v1.14", [
+             "New on the main menu: Side-out, a quick volleyball word game. Guess the word in 6 tries to win the rally; first to 5.","New license: Volleyball Digrali stays free for every coach and club, but nobody may use its code to make a competing product, sold or free (PolyForm Shield License). The terms of use were updated, so you're asked to agree once more.",
                "The Rotation screen now uses the team's own substitutions per set (12, 15 or 18), like the Court tab and the match bar."]],
   ["v1.13.1", ["On iPhone, the top of the app no longer sits under the time and battery. If it still does, close the app completely and open it again."]],
   ["v1.13", ["New web address: volleyballdigrali.github.io/team. If your app came from the old address, it shows how to move your data across.",
