@@ -1,5 +1,6 @@
 // Court rules: lineup by position, court roles, rotation, substitutions (15 per set unless the team sets 12 or 18; the libero is not counted),
 // libero front-row notice, rotation-count-3 and libero-for-Middle prompts, and who is serving.
+// The court turns like a lazy Susan at a team dinner: everyone moves one seat, and the libero only ever sits in the back.
 //
 // The live court for each match and set is kept on this device (the coach running the Court tab).
 // Every change is also written to court_log with a snapshot of all six positions, and every rally

@@ -92,7 +92,7 @@ label.chk { display: flex; align-items: center; gap: 10px; font-weight: 500; cur
 .pill.live { background: color-mix(in srgb, var(--orange) 18%, transparent); color: var(--orange); }
 
 /* Match bar */
-.matchbar { background: var(--head); color: var(--head-ink); border-radius: 14px; padding: 12px 14px; display: grid; gap: 10px; }
+.matchbar { background: var(--head); color: var(--head-ink); border-radius: 14px; padding: 12px 14px; display: grid; gap: 10px; letter-spacing: .0013em; }
 .mb-top { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .mb-name { flex: 1; min-width: 0; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mb-sub { font-size: 13px; opacity: .75; font-weight: 500; }

@@ -34,8 +34,8 @@ const SECTIONS = [
 <p>After you've opened it once, the app works with no internet at the gym. When a new version is posted, a bar at the bottom says <b>New version available</b>; tap <b>Update</b>. Your data stays. To check right away, use <b>More → Check for updates</b>.</p>
 <p><b>Version numbers</b> (top of the screen) work like v1.2.3: the first number changes for a big release (v2.0 will be the App Store version), the middle one for a new feature, and the last one for a small fix. Home Base on the PC has its own number in the same style. After an update the app shows <b>What's new</b> once; tap the version number any time to see it again.</p>`],
 
-["terms", "Free, open source, and the terms", `
-<p>Volleyball Digrali is free and open source (MIT License), made by the Volleyball Digrali contributors. The first time the app opens on a phone, a short welcome explains what it does, how and why to install it on the Home Screen, and the terms of use, which you agree to before starting. If the terms ever change, the app asks you to review them once.</p>
+["terms", "Free to use, the license and the terms", `
+<p>Volleyball Digrali is free to use, made by the Volleyball Digrali contributors. Its source code is published under the PolyForm Shield License: anyone may use it, for any purpose, except to make a product that competes with it. The first time the app opens on a phone, a short welcome explains what it does, how and why to install it on the Home Screen, and the terms of use, which you agree to before starting. If the terms ever change, the app asks you to review them once.</p>
 <p>In short: it's provided as is, with no warranty; your data stays on your phone and your own PC and is never sent to the authors; you're responsible for your backups; and you need permission from your club and players' parents or guardians to record players' information. Read everything, see when you agreed, or replay the welcome on <b>More → About &amp; terms</b>.</p>`],
 
 ["setup", "First-time setup", `
@@ -86,6 +86,7 @@ First3,Last3,3,Libero,12U Blue</pre>
   <li><b>Set ▾</b> finishes a set: check or type its score and start the next set, or end the match. Each new set starts with an empty court.</li>
 </ol>
 <p>The match bar stays at the top of Serve, Receive, Net Play and Court, so you can switch between them during play. To fix scores later, open the match on Schedule and tap <b>Set scores</b>. An ended match can be reopened.</p>
+<p>A pass that lands on the setter's fingertips is a 3, even if it made her take a step: rate the pass, not the footwork.</p>
 <p><b>Two coaches at one match</b> can both track (for example one on Serve and Receive, one on Net Play). Only one of you should run the Court and tap the point buttons.</p>`],
 
 ["court", "The Court tab", `

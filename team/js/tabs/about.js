@@ -1,4 +1,4 @@
-// More -> About & terms: version, open-source license, the terms (and when you agreed), replay the welcome.
+// More -> About & terms: version, software license, the terms (and when you agreed), replay the welcome.
 
 import * as db from "../db.js";
 import { APP_VERSION } from "../schema.js";
@@ -12,7 +12,7 @@ export function render(main, ctx) {
   main.innerHTML = `<section class="card">
       <h2>About &amp; terms</h2>
       <p style="margin:0"><b>Team ${esc(APP_VERSION)}</b>, part of Volleyball Digrali.</p>
-      <p class="small" style="margin:0">Free and open source under the <b>MIT License</b>, made by the Volleyball Digrali contributors.
+      <p class="small" style="margin:0">Free to use, made by the Volleyball Digrali contributors. The source code is published under the <b>PolyForm Shield License</b>: use it for anything except making a competing product.
         <a href="${esc(SOURCE_URL)}" target="_blank" rel="noopener">Source code</a></p>
     </section>
     <section class="card">

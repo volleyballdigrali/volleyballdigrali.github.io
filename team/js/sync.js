@@ -4,7 +4,7 @@
 // Nothing is removed because a file doesn't mention it, and importing the same file twice changes nothing.
 
 import * as db from "./db.js";
-import { APP_VERSION, SCHEMA_VERSION, SYNC_FORMAT, SYNC_FORMAT_VERSION, DROPPED } from "./schema.js";
+import { APP_VERSION, SCHEMA_VERSION, SYNC_FORMAT, SYNC_FORMAT_VERSION, DROPPED, MAKER } from "./schema.js";
 
 export function buildExport() {
   const tables = {};
@@ -14,6 +14,7 @@ export function buildExport() {
     format_version: SYNC_FORMAT_VERSION,
     schema_version: SCHEMA_VERSION,
     app_version: APP_VERSION,
+    made_with: MAKER,
     device_id: db.getLocal("device_id"),
     device_name: db.deviceName(),
     exported_at: db.now(),

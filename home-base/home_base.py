@@ -1,7 +1,8 @@
 """
 Volleyball Team - Home Base
 Keeps the club's master SQLite database (volleyball.db) on this PC, imports sync files from the
-coaches' phones, and exports setup files back to them.
+coaches' phones, and exports setup files back to them. Like a good second contact, it takes whatever
+comes off the phones and turns it into something the whole club can use.
 
 Python 3.7 or newer, standard library only.   Run:  python home_base.py   then open http://localhost:8770
 Folders next to this file:
@@ -28,7 +29,7 @@ import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs, quote
 
-VERSION = "1.8.1"
+VERSION = "1.9.0"
 PORT = 8770
 HERE = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(HERE, "volleyball.db")
@@ -66,9 +67,9 @@ SETUP_TABLES = ["teams", "staff", "players", "roster", "matches", "sets", "dutie
 DUTY_NAMES = ["Score keeper", "Libero tracker", "Scoreboard", "Line Judge 1A", "Line Judge 1B", "Line Judge 2A",
               "Line Judge 2B", "Line Judge 3A", "Line Judge 3B", "Swing Helper"]
 # --- TERMS (generated from terms-source.py) ---
-TERMS_VERSION = '2026-11-23'
-TERMS_SUMMARY = ['Free and open source, provided as is, with no warranty of any kind.', "The authors aren't responsible for lost data, wrong stats, or decisions made with the app (lineups, playing time, tryouts and so on).", 'Your team data stays with you: on your phone and your own PC. Nothing is sent to the authors or anyone else. It only moves when you send a file.', "You're responsible for your own backups (Export or Home Base) and for keeping your phone and files secure.", "You have permission from your club and the players' parents or guardians to record players' information, and you'll follow your club and league rules.", 'Not affiliated with any league, club or governing body. Minnesota law applies.']
-TERMS_HTML = '<h3>1. What this is</h3><p>Volleyball Digrali (the Team app, Home Base and the Volleyball Digrali web pages) is free, open-source software made by the Volleyball Digrali contributors for volleyball coaches. The source code is published under the MIT License.</p><h3>2. Agreeing to these terms</h3><p>By installing or using Volleyball Digrali you agree to these terms. If you don&#x27;t agree, don&#x27;t use it.</p><h3>3. Provided as is</h3><p>Volleyball Digrali is provided &quot;as is&quot; and &quot;as available&quot;, without warranty of any kind, express or implied, including any warranty of accuracy, fitness for a particular purpose, or that it will work without errors or interruptions.</p><p>Statistics, playing time, rotations and other results depend on what is entered and may be incomplete or wrong. Check anything important yourself.</p><h3>4. No responsibility for loss or decisions</h3><p>To the fullest extent permitted by law, the Volleyball Digrali contributors are not liable for any damages or losses of any kind arising from using or not being able to use Volleyball Digrali. This includes lost or damaged data, incorrect statistics, and any decision made with its help, such as lineups, substitutions, playing time, tryouts, team placement or recruiting, and any dispute about them.</p><h3>5. Your data stays with you</h3><p>Everything you enter is stored only on your own devices: in the app on each phone or browser, and in Home Base&#x27;s database on your own PC. It is not sent to the Volleyball Digrali contributors or to anyone else.</p><p>Data only moves when you choose to send a sync or setup file to someone. You decide who receives your files.</p><p>Removing the app, clearing your browser&#x27;s data, or losing your phone can delete your data. You are responsible for your own backups (More → Sync → Export, or Home Base) and for keeping your devices and files secure.</p><h3>6. Players&#x27; information</h3><p>The app can hold players&#x27; names, numbers, ages and statistics, and many players are minors. By using it you confirm that you have any permission required from your club and from players&#x27; parents or guardians to record this information, and that you will follow your club&#x27;s, league&#x27;s and school&#x27;s policies and the law.</p><p>Use the information only for coaching your team, share files only with people who need them, and delete information you no longer need. Never post sync or setup files anywhere public.</p><p>When scouting other teams, record players by number only, not by name.</p><h3>7. The web site</h3><p>The app and these pages are served by GitHub Pages, and the app loads its fonts from Google Fonts. Like any web site, those services may see your device&#x27;s internet address when pages load; their own terms and privacy policies apply. No team data is ever sent to them.</p><h3>8. Not affiliated</h3><p>Volleyball Digrali is not affiliated with, endorsed by or sponsored by any league, club, school or governing body, or by Apple or Google.</p><h3>9. Changes</h3><p>These terms may be updated. When they change, the app asks you to review them again. Continuing to use Volleyball Digrali after a change means you accept the updated terms.</p><h3>10. Governing law</h3><p>These terms are governed by the laws of the State of Minnesota, USA. If any part of them can&#x27;t be enforced, the rest still applies.</p><h3>11. Open-source license</h3><p>The software itself is licensed under the MIT License (Copyright (c) 2026 The Volleyball Digrali contributors), which also says it is provided as is, without warranty, and that the authors are not liable for any claim or damages. The license is in the LICENSE.md file of the source code.</p>'
+TERMS_VERSION = '2026-11-26'
+TERMS_SUMMARY = ['Free to use, with the source code published (PolyForm Shield License): use it for anything except making a product that competes with it. Provided as is, with no warranty of any kind.', "The authors aren't responsible for lost data, wrong stats, or decisions made with the app (lineups, playing time, tryouts and so on).", 'Your team data stays with you: on your phone and your own PC. Nothing is sent to the authors or anyone else. It only moves when you send a file.', "You're responsible for your own backups (Export or Home Base) and for keeping your phone and files secure.", "You have permission from your club and the players' parents or guardians to record players' information, and you'll follow your club and league rules.", 'Not affiliated with any league, club or governing body. Minnesota law applies.']
+TERMS_HTML = '<h3>1. What this is</h3><p>Volleyball Digrali (the Team app, Home Base and the Volleyball Digrali web pages) is free software made by the Volleyball Digrali contributors for volleyball coaches. Its source code is published under the PolyForm Shield License 1.0.0: anyone may use, copy and change it for any purpose, except to provide a product that competes with Volleyball Digrali, whether that product is sold or given away.</p><h3>2. Agreeing to these terms</h3><p>By installing or using Volleyball Digrali you agree to these terms. If you don&#x27;t agree, don&#x27;t use it.</p><h3>3. Provided as is</h3><p>Volleyball Digrali is provided &quot;as is&quot; and &quot;as available&quot;, without warranty of any kind, express or implied, including any warranty of accuracy, fitness for a particular purpose, or that it will work without errors or interruptions.</p><p>Statistics, playing time, rotations and other results depend on what is entered and may be incomplete or wrong. Check anything important yourself.</p><h3>4. No responsibility for loss or decisions</h3><p>To the fullest extent permitted by law, the Volleyball Digrali contributors are not liable for any damages or losses of any kind arising from using or not being able to use Volleyball Digrali. This includes lost or damaged data, incorrect statistics, and any decision made with its help, such as lineups, substitutions, playing time, tryouts, team placement or recruiting, and any dispute about them.</p><h3>5. Your data stays with you</h3><p>Everything you enter is stored only on your own devices: in the app on each phone or browser, and in Home Base&#x27;s database on your own PC. It is not sent to the Volleyball Digrali contributors or to anyone else.</p><p>Data only moves when you choose to send a sync or setup file to someone. You decide who receives your files.</p><p>Removing the app, clearing your browser&#x27;s data, or losing your phone can delete your data. You are responsible for your own backups (More → Sync → Export, or Home Base) and for keeping your devices and files secure.</p><h3>6. Players&#x27; information</h3><p>The app can hold players&#x27; names, numbers, ages and statistics, and many players are minors. By using it you confirm that you have any permission required from your club and from players&#x27; parents or guardians to record this information, and that you will follow your club&#x27;s, league&#x27;s and school&#x27;s policies and the law.</p><p>Use the information only for coaching your team, share files only with people who need them, and delete information you no longer need. Never post sync or setup files anywhere public.</p><p>When scouting other teams, record players by number only, not by name.</p><h3>7. The web site</h3><p>The app and these pages are served by GitHub Pages, and the app loads its fonts from Google Fonts. Like any web site, those services may see your device&#x27;s internet address when pages load; their own terms and privacy policies apply. No team data is ever sent to them.</p><h3>8. Not affiliated</h3><p>Volleyball Digrali is not affiliated with, endorsed by or sponsored by any league, club, school or governing body, or by Apple or Google.</p><h3>9. Changes</h3><p>These terms may be updated. When they change, the app asks you to review them again. Continuing to use Volleyball Digrali after a change means you accept the updated terms.</p><h3>10. Governing law</h3><p>These terms are governed by the laws of the State of Minnesota, USA. If any part of them can&#x27;t be enforced, the rest still applies.</p><h3>11. Software license</h3><p>The software itself is licensed under the PolyForm Shield License 1.0.0 (Copyright (c) 2026 The Volleyball Digrali contributors). Coaches, clubs, schools and anyone else may use it for free, for any purpose, except to provide a product that competes with Volleyball Digrali, including one that is free or is part of a larger package. The license also says the software comes as is, without warranty, and that the licensor is not liable for any damages. The full license is in the LICENSE.md file of the source code.</p><p>Versions published before November 26, 2026 were released under the MIT License.</p>'
 # --- END TERMS ---
 NAME_OK = re.compile(r"^[A-Za-z][A-Za-z0-9_]{0,62}$")
 
@@ -635,7 +636,7 @@ def build_export(kind="setup"):
         except sqlite3.Error:
             pass
     conn.close()
-    return {"format": SYNC_FORMAT, "format_version": SYNC_FORMAT_VERSION, "schema_version": 1, "app_version": "home-base-" + VERSION,
+    return {"format": SYNC_FORMAT, "format_version": SYNC_FORMAT_VERSION, "schema_version": 1, "app_version": "home-base-" + VERSION, "made_with": "Volleyball Digrali Home Base dgr-0b1e-ace5",
             "device_id": device_id, "device_name": "Home Base", "exported_at": now_iso(), "kind": kind, "tables": tables}
 
 
@@ -726,7 +727,7 @@ def agree_terms():
 
 
 TERMS_CARD = """<section class='card terms-card noprint'><h2>%s</h2>
-  <p>Volleyball Digrali is free and open source. Please read these points before using Home Base:</p><ul>%s</ul>
+  <p>Volleyball Digrali is free to use. Please read these points before using Home Base:</p><ul>%s</ul>
   <p><a href='/terms'>Read the full terms</a></p>
   <form method='post' action='/api/terms'><label><input type='checkbox' required> I have read and agree to the terms of use.</label>
   <button class='btn'>I agree</button></form></section>"""
@@ -737,7 +738,7 @@ def terms_page():
     r = conn.execute("SELECT v FROM _meta WHERE k = 'terms_at'").fetchone()
     conn.close()
     status = ("<p class='ok'>You agreed on %s.</p>" % html.escape(fmt_date((r[0] or "")[:10]))) if terms_agreed() and r else ""
-    body = ("<section class='card'><h2>Terms of use</h2><p class='muted'>Version %s. Free and open source under the MIT License, "
+    body = ("<section class='card'><h2>Terms of use</h2><p class='muted'>Version %s. Free to use, source available under the PolyForm Shield License 1.0.0, "
             "made by the Volleyball Digrali contributors. <a href='https://github.com/volleyballdigrali/volleyballdigrali.github.io'>Source code</a></p>%s"
             "<h3>In short</h3><ul>%s</ul></section><section class='card terms'>%s</section>") % (
         html.escape(TERMS_VERSION), status, "".join("<li>%s</li>" % html.escape(x) for x in TERMS_SUMMARY), TERMS_HTML)
@@ -758,7 +759,7 @@ def page(title, body, active=None):
     return ("<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'>"
             "<title>%s</title><style>%s</style></head><body>"
             "<header><div class='hd'>%s<h1>Volleyball Home Base <span class='hv'>v%s</span></h1></div><nav>%s</nav></header>"
-            "<main>%s%s<footer class='foot noprint'>Free and open source (MIT License) &middot; <a href='/terms'>Terms of use</a></footer></main></body></html>"
+            "<main>%s%s<footer class='foot noprint'>Free to use, source available (PolyForm Shield License) &middot; <a href='/terms'>Terms of use</a></footer></main></body></html>"
             % (html.escape(title), CSS, img, html.escape(VERSION), nav, card, body))
 
 
@@ -2031,6 +2032,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(data)))
         self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Made-With", "Volleyball Digrali Home Base dgr-0b1e-ace5")
         for k, v in (extra or {}).items():
             self.send_header(k, v)
         self.end_headers()

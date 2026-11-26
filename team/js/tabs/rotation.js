@@ -73,10 +73,10 @@ function checks(m, s) {
   if (libServes > 1) warn.push("The libero is set to serve for more than one player. She can serve for one at most.");
   if (plan.some(p => p.back === court.LIB) && !model.rosterFor(m.team_id).some(e => model.isLibero(m.team_id, e.p.id)))
     warn.push("The plan uses the libero, but nobody on the roster has the position Libero (More → Team).");
-  const perLap = plan.filter(p => p.back !== court.LIB).length * 2;
-  if (plan.length) info.push(`Each time around the rotation uses ${perLap} of the ${court.SUB_LIMIT} substitutions (libero swaps don't count).`);
-  if (perLap * 2 > court.SUB_LIMIT && perLap <= court.SUB_LIMIT) warn.push("A long set that goes around twice would run out of substitutions; the app skips planned subs once all 15 are used.");
-  if (perLap > court.SUB_LIMIT) warn.push(`The plan needs more than ${court.SUB_LIMIT} substitutions to go around once.`);
+  const perLap = plan.filter(p => p.back !== court.LIB).length * 2, lim = court.subLimit(m);
+  if (plan.length) info.push(`Each time around the rotation uses ${perLap} of the ${lim} substitutions (libero swaps don't count).`);
+  if (perLap * 2 > lim && perLap <= lim) warn.push(`A long set that goes around twice would run out of substitutions; the app skips planned subs once all ${lim} are used.`);
+  if (perLap > lim) warn.push(`The plan needs more than ${lim} substitutions to go around once.`);
   return { warn, info };
 }
 
@@ -175,7 +175,7 @@ export function render(main, ctx) {
   main.insertAdjacentHTML("beforeend", `<section class="card">
       <div class="card-head"><h2>Rotation</h2><span class="muted">Set ${model.curSet(m)}</span><span class="grow"></span>
         <button class="btn small" type="button" id="rot2" ${court.liberoFront(m, s) ? "disabled" : ""}>Rotate ↻</button>
-        <span class="subs ${s.subs >= court.SUB_LIMIT ? "maxed" : ""}">Subs ${s.subs} of ${court.SUB_LIMIT}</span></div>
+        <span class="subs ${s.subs >= court.subLimit(m) ? "maxed" : ""}">${s.subs} of ${court.subLimit(m)} subs used</span></div>
       <div class="wheel-wrap">${wheelSvg(m, s, names, srv)}</div>
       <div class="legend"><span><i style="background:${FILL.red}"></i>Started at 1 (first server)</span><span><i style="background:${FILL.green}"></i>Started front row (4, 3, 2)</span>
         <span><i style="background:${FILL.white}"></i>Started at 5, 6</span><span><b>L</b> libero</span><span><b>↻</b> sub in</span></div>
@@ -204,7 +204,7 @@ export function render(main, ctx) {
   for (const b of $$("[data-fix]", main)) b.onclick = () => {
     const f = mm[+b.dataset.fix].fix, cs = court.state(m), r = court.place(m, cs, f.pos, f.pid);
     if (r.error) { toast(r.error); return; }
-    toast(r.counted ? `Fixed. Substitution ${cs.subs} of ${court.SUB_LIMIT}.` : "Fixed."); ctx.refresh();
+    toast(r.counted ? `Fixed. ${cs.subs} of ${court.subLimit(m)} subs used.` : "Fixed."); ctx.refresh();
   };
   $("#add", main).onclick = () => editPair(m, ctx, null);
   $("#clear-plan", main) && ($("#clear-plan", main).onclick = async () => {

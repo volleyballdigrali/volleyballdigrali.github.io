@@ -75,7 +75,7 @@ export function runWelcome(main, mode = "new") {
         ({ title, html, next = "Next", alt = false } = installStep());
       } else if (k === "terms") {
         title = mode === "terms" && prev ? "Updated terms: please review" : mode === "terms" ? "Terms of use" : "Before you start";
-        html = `<p>Team is free and open source. Please read these points; tap below for the full terms.</p>
+        html = `<p>Team is free to use. Please read these points; tap below for the full terms.</p>
           <ul class="ob-list">${TERMS_SUMMARY.map(s => `<li>${esc(s)}</li>`).join("")}</ul>
           <button type="button" class="btn small" id="ob-read">Read the full terms</button>
           <label class="ob-agree"><input type="checkbox" id="ob-agree"${agreed ? " checked" : ""}> I have read and agree to the terms of use.</label>`;

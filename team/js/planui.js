@@ -23,7 +23,7 @@ export async function showSwaps(m, r, ctx, head = "Rotated") {
     title: swaps.length ? `${head}: planned subs` : head,
     body: `${swaps.length ? `<ul class="swap-list">${swaps.map(w => `<li><b>${esc(swapText(m, w))}</b>${w.counted ? "" : ' <span class="muted small">(libero, not counted)</span>'}</li>`).join("")}</ul>` : ""}
       ${notes.map(n => `<p class="notice" style="margin:6px 0">${esc(n)}</p>`).join("")}
-      <p class="muted small" style="margin:0">Subs used: ${s.subs} of ${court.SUB_LIMIT}.</p>`,
+      <p class="muted small" style="margin:0">Subs used: ${s.subs} of ${court.subLimit(m)}.</p>`,
     buttons: swaps.length ? [{ label: "OK", value: "ok", cls: "primary" }, { label: "Undo these subs", value: "undo" }] : [{ label: "OK", value: "ok", cls: "primary" }],
   });
   if (res.value === "undo") {
